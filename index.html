@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuadre Diario | 2M TELECOM</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">2M TELECOM</p>
+        <h1>Cuadre diario</h1>
+      </div>
+      <label class="date-field">Fecha
+        <input type="date" id="fecha">
+      </label>
+    </header>
+
+    <section class="sections">
+     
+<article class="panel">
+  <h2 class="heading green">CAJA HUK</h2>
+
+  <div class="form-grid">
+    <div class="separator">SALDO INICIAL — AYER</div>
+
+    <label>Efectivo inicial
+      <input id="efectivoInicial" type="number" step="0.01" value="0">
+    </label>
+
+    <label>Bolsa recaudo inicial
+      <input id="bolsaInicial" type="number" step="0.01" value="0">
+    </label>
+
+    <label>Recargas inicial
+      <input id="recargasInicial" type="number" step="0.01" value="0">
+    </label>
+
+    <div class="separator">MOVIMIENTOS DEL DÍA</div>
+
+    <label>Ganancia de recaudo
+      <input id="gananciaRecaudo" type="number" step="0.01" value="0">
+    </label>
+
+    <label>Ganancia de recargas
+      <input id="gananciaRecargas" type="number" step="0.01" value="0">
+    </label>
+
+    <label>Gastos HUK
+      <input id="gastosHuk" class="expense" type="number" step="0.01" value="0">
+    </label>
+
+    <div class="separator">SALDO FINAL — HOY</div>
+
+    <label>Efectivo cierre
+      <input id="efectivoCierre" type="number" step="0.01" value="0">
+    </label>
+
+    <label>Bolsa cierre
+      <input id="bolsaCierre" type="number" step="0.01" value="0">
+    </label>
+
+    <label>Recargas cierre
+      <input id="recargasCierre" type="number" step="0.01" value="0">
+    </label>
+  </div>
+
+  <div class="result-list">
+    <div>
+      <span>Capital inicial</span>
+      <strong id="capitalInicial">S/ 0.00</strong>
+    </div>
+
+    <div>
+      <span>(+) Gastos HUK</span>
+      <strong id="resGastosHuk">S/ 0.00</strong>
+    </div>
+
+    <div>
+      <span>(−) Ganancia de recaudo</span>
+      <strong id="resGananciaRecaudo">S/ 0.00</strong>
+    </div>
+
+    <div>
+      <span>(−) Ganancia de recargas</span>
+      <strong id="resGananciaRecargas">S/ 0.00</strong>
+    </div>
+
+    <div>
+      <span>Capital esperado</span>
+      <strong id="capitalEsperado">S/ 0.00</strong>
+    </div>
+
+    <div>
+      <span>Capital real</span>
+      <strong id="capitalReal">S/ 0.00</strong>
+    </div>
+
+    <div class="result-total">
+      <span>Diferencia</span>
+      <strong id="diferencia">S/ 0.00</strong>
+    </div>
+  </div>
+
+  <div class="status" id="estadoHuk">
+    INGRESA LOS DATOS DE CAJA
+  </div>
+</article>
+
+      <article class="panel">
+        <h2 class="heading blue">CHIPS</h2>
+        <div class="form-grid">
+          <label>CASI (cantidad)<input id="casi" type="number" min="0" step="1" value="0"></label>
+          <label>Prepago (cantidad)<input id="prepago" type="number" min="0" step="1" value="0"></label>
+          <label>Pospago (cantidad)<input id="pospago" type="number" min="0" step="1" value="0"></label>
+          <div class="separator">IMPORTES</div>
+          <label>Total chips (S/)<input id="totalChips" type="number" min="0" step="1" value="0"></label>
+          <label>Yape chips (S/)<input id="yapeChips" class="yape" type="number" min="0" step="1" value="0"></label>
+        </div>
+        <div class="result-list">
+          <div><span>Cantidad total</span><strong id="cantidadChips">0</strong></div>
+          <div><span>Total chips</span><strong id="resTotalChips">S/ 0.00</strong></div>
+          <div><span>Yape chips</span><strong id="resYapeChips">S/ 0.00</strong></div>
+          <div class="result-total"><span>Efectivo esperado</span><strong id="efectivoChips">S/ 0.00</strong></div>
+        </div>
+        <div class="status" id="estadoChips">INGRESA LOS DATOS DE CHIPS</div>
+      </article>
+
+      <article class="panel">
+        <h2 class="heading green">CELULARES</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Modelo</th><th>Precio (S/)</th><th>Cant.</th><th>Total</th><th></th></tr></thead>
+            <tbody id="filasCelulares"></tbody>
+          </table>
+        </div>
+        <button type="button" class="button light add-button" id="agregarCelular">+ Agregar modelo</button>
+        <label class="yape-field">Yape celulares (S/)
+          <input id="yapeCelulares" class="yape" type="number" min="0" step="0.01" value="0">
+        </label>
+        <div class="result-list">
+          <div><span>Total celulares</span><strong id="totalCelulares">S/ 0.00</strong></div>
+          <div><span>Yape celulares</span><strong id="resYapeCelulares">S/ 0.00</strong></div>
+          <div class="result-total"><span>Efectivo esperado</span><strong id="efectivoCelulares">S/ 0.00</strong></div>
+        </div>
+        <div class="status" id="estadoCelulares">AGREGA LOS CELULARES DEL DÍA</div>
+      </article>
+      
+    </section>
+    <section class="summary">
+      <h2>Resumen del cuadre</h2>
+      <div class="summary-grid">
+        <div class="summary-card"><span>Capital real HUK</span><strong id="resCapitalReal">S/ 0.00</strong></div>
+        <div class="summary-card"><span>Diferencia HUK</span><strong id="resDiferencia">S/ 0.00</strong></div>
+        <div class="summary-card"><span>Efectivo esperado chips</span><strong id="resEfectivoChips">S/ 0.00</strong></div>
+        <div class="summary-card"><span>Efectivo esperado celulares</span><strong id="resEfectivoCelulares">S/ 0.00</strong></div>
+      </div>
+    </section>
+    
+<section class="panel historial-panel">
+  <h2 class="heading blue">HISTORIAL DE CUADRES</h2>
+
+  <div class="form-grid">
+    <label>Desde
+     <label>Desde
+  <input type="date" id="histDesde">
+</label>
+
+<label>Hasta
+  <input type="date" id="histHasta">
+</label>
+
+    <label>Estado
+      <select id="histEstado">
+        <option value="todos">Todos los cuadres</option>
+        <option value="cuadrada">Solo cajas cuadradas</option>
+        <option value="diferencia">Solo cajas con diferencias</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="button primary" id="buscarHistorial">
+      Buscar cuadres
+    </button>
+    <button type="button" class="button light" id="actualizarHistorial">
+      Actualizar
+    </button>
+  </div>
+
+  <p id="mensajeHistorial"></p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Capital real</th>
+          <th>Diferencia</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="filasHistorial"></tbody>
+    </table>
+  </div>
+
+  <div id="detalleHistorico" hidden>
+    <h3>Detalle del cuadre anterior</h3>
+    <p id="fechaDetalleHistorico"></p>
+    <div id="resumenDetalleHistorico" class="result-list"></div>
+
+    <h4>Celulares registrados</h4>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Modelo</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="filasDetalleHistorico"></tbody>
+      </table>
+    </div>
+
+    <button type="button" class="button light" id="cerrarDetalleHistorico">
+      Cerrar detalle
+    </button>
+  </div>
+</section>
+
+  <div class="actions">
+  <button type="button" class="button primary" id="guardar">
+    Guardar cuadre
+  </button>
+
+  <button type="button" class="button primary" id="imprimir">
+    Imprimir / Guardar PDF
+  </button>
+
+  <button type="button" class="button light" id="limpiar">
+    Limpiar datos
+  </button>
+</div>
+
+<p id="mensajeGuardado" role="status" aria-live="polite"></p>
