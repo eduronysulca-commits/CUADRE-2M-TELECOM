@@ -644,6 +644,9 @@ document.addEventListener("change", evento => {
 
  
   $("agregarCelular")?.addEventListener("click", () => agregarCelular());
+  // ACTUALIZAR EFECTIVO CUANDO CAMBIE EL YAPE DE CELULARES
+$("yapeCelulares")?.addEventListener("input", calcularCelulares);
+$("yapeCelulares")?.addEventListener("change", calcularCelulares);
 
   $("guardar")?.addEventListener("click", guardarCuadre);
 
