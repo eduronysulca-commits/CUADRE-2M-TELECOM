@@ -699,4 +699,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
   calcularChips();
 });
+function calcularDesgloseEfectivo(actualizarCierre = true) {
+  let totalCentimos = 0;
 
+  document.querySelectorAll(".cantidad-efectivo").forEach(campo => {
+    // Lo que escribes es el monto en soles de esa fila
+    const montoCentimos = Math.max(0, Math.round((Number(campo.value) || 0) * 100));
+
+    totalCentimos += montoCentimos;
+
+    // billete100 -> subtotal100, moneda050 -> subtotal050
+    const sufijo = campo.id.replace("billete", "").replace("moneda", "");
+    mostrar("subtotal" + sufijo, "S/ " + (montoCentimos / 100).toFixed(2));
+  });
+
+  const total = totalCentimos / 100;
+
+  mostrar("totalEfectivoContado", "S/ " + total.toFixed(2));
+
+  // Pasar el total a Efectivo cierre de CAJA HUK
+  if (actualizarCierre) {
+    const efectivoCierre = $("efectivoCierre");
+
+    if (efectivoCierre) {
+      efectivoCierre.value = total.toFixed(2);
+      efectivoCierre.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  }
+}
+
+// Al escribir en una fila: calcula y actualiza Efectivo cierre
+document.addEventListener("input", evento => {
+  if (evento.target.matches(".cantidad-efectivo")) {
+    calcularDesgloseEfectivo(true);
+  }
+});
+
+// Al abrir la página: solo muestra los subtotales (no toca Efectivo cierre)
+document.addEventListener("DOMContentLoaded", () => {
+  calcularDesgloseEfectivo(false);
+});
+
+// Al presionar "Limpiar datos": refresca los subtotales del desglose
+document.addEventListener("DOMContentLoaded", () => {
+  $("limpiar")?.addEventListener("click", () => {
+    calcularDesgloseEfectivo(false);
+  });
+});
