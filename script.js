@@ -423,9 +423,7 @@ async function guardarCuadre() {
       body: JSON.stringify(payload)
     });
 
-    mensaje("mensajeGuardado",
-      "Solicitud enviada. Comprueba el registro en Google Sheets antes de volver a guardarlo.");
-
+    mostrarCuadreGuardado();
     localStorage.removeItem(CLAVE_BORRADOR);
 
     // No se afirma que el servidor guardó el cuadre:
