@@ -414,8 +414,10 @@ async function guardarCuadre() {
 
     celulares: obtenerCelulares().filter(c => c.modelo || c.precio || c.cantidad)
   };
-
   try {
+    // Mostrar animación de carga
+    mostrarCargandoCuadre();
+
     await fetch(API_URL, {
       method: "POST",
       mode: "no-cors",
@@ -423,17 +425,27 @@ async function guardarCuadre() {
       body: JSON.stringify(payload)
     });
 
+    // Ocultar carga
+    ocultarCargandoCuadre();
+
+    // Mantener tu mensaje original
     mostrarCuadreGuardado();
+
     localStorage.removeItem(CLAVE_BORRADOR);
 
-    // No se afirma que el servidor guardó el cuadre:
-    // no-cors no permite leer su respuesta.
   } catch (error) {
     console.error(error);
+
+    ocultarCargandoCuadre();
+
     mensaje("mensajeGuardado", "Error de conexión. Intenta nuevamente.");
+
   } finally {
+    ocultarCargandoCuadre();
+
     if (boton) boton.disabled = false;
   }
+ 
 }
 
 // =====================================================
@@ -752,4 +764,19 @@ function mostrarCuadreGuardado() {
   setTimeout(() => {
     modal.style.display = "none";
   }, 2500);
+}
+function mostrarCargandoCuadre() {
+  const modal = document.getElementById("modalCargando");
+
+  if (modal) {
+    modal.style.display = "flex";
+  }
+}
+
+function ocultarCargandoCuadre() {
+  const modal = document.getElementById("modalCargando");
+
+  if (modal) {
+    modal.style.display = "none";
+  }
 }
