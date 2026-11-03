@@ -792,3 +792,97 @@ td input[type="number"] {
   font-size: 14px;
   font-weight: 800;
 }
+/* FONDO OSCURO DEL MODAL */
+.modal-guardado {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.60);
+  backdrop-filter: blur(5px);
+  z-index: 99999;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* VENTANA BLANCA */
+.modal-contenido {
+  background: #ffffff;
+  width: 100%;
+  max-width: 390px;
+  padding: 38px 25px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.20);
+  border: 1px solid #bbf7d0;
+  animation: aparecerModal 0.35s ease;
+}
+
+/* CÍRCULO VERDE */
+.icono-exito {
+  width: 100px;
+  height: 100px;
+  background: #dcfce7;
+  border: 8px solid #f0fdf4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  animation: aparecerCirculo 0.5s ease;
+}
+
+/* CHECK */
+.icono-exito svg {
+  width: 55px;
+  height: 55px;
+}
+
+.check-animado {
+  fill: none;
+  stroke: #16a34a;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: dibujarCheck 0.5s ease forwards 0.3s;
+}
+
+/* TEXTO */
+.modal-contenido h2 {
+  color: #15803d;
+  font-size: 25px;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* ANIMACIONES */
+@keyframes aparecerModal {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes aparecerCirculo {
+  0% {
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes dibujarCheck {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
