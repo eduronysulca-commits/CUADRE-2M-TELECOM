@@ -744,3 +744,12 @@ document.addEventListener("DOMContentLoaded", () => {
     calcularDesgloseEfectivo(false);
   });
 });
+function mostrarCuadreGuardado() {
+  const modal = document.getElementById("modalGuardado");
+
+  modal.style.display = "flex";
+
+  setTimeout(() => {
+    modal.style.display = "none";
+  }, 2500);
+}
