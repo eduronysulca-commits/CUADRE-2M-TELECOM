@@ -2,6 +2,35 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbwVP-bEBSZS6i_jFCVWtTicStkbXqMyrOdOlplJ1nK_HJ8KvKVwyaLDt0MWqEtJ3IwORQ/exec";
 
 const $ = id => document.getElementById(id);
+// ======================================
+// NAVEGACIÓN ENTRE PESTAÑAS
+// ======================================
+
+function cambiarVista(vista) {
+  const mostrarHistorial = vista === "historial";
+
+  $("vistaCuadre").hidden = mostrarHistorial;
+  $("vistaHistorial").hidden = !mostrarHistorial;
+
+  $("btnNuevoCuadre").classList.toggle(
+    "activa",
+    !mostrarHistorial
+  );
+
+  $("btnHistorial").classList.toggle(
+    "activa",
+    mostrarHistorial
+  );
+
+  if (mostrarHistorial) {
+    cargarHistorial2M();
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
 const CLAVE_BORRADOR = "2mTelecom_borradorCuadre_v1";
 
 let registrosAnteriores = [];
@@ -196,7 +225,10 @@ function calcularChips() {
 
   // Calcular importes según el precio de cada chip
   const total = (casi * 10) + (prepago * 5) + (pospago * 1);
-
+  
+  // ACTUALIZAR EL CAMPO QUE SE ENVÍA A GOOGLE SHEETS
+  $("totalChips").value = total;
+  
   // Restar Yape para obtener el efectivo
   const efectivo = total - yape;
 
@@ -445,7 +477,7 @@ async function guardarCuadre() {
 
     if (boton) boton.disabled = false;
   }
- 
+  
 }
 
 // =====================================================
@@ -624,6 +656,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!$("fecha").value) poner("fecha", fechaDeHoy());
 
   restaurarBorrador();
+    // BOTONES DE NAVEGACIÓN
+
+  $("btnNuevoCuadre")?.addEventListener("click", () => {
+    cambiarVista("cuadre");
+  });
+
+  $("btnHistorial")?.addEventListener("click", () => {
+    cambiarVista("historial");
+  });
 
   $("fecha")?.addEventListener("change", cargarSaldosIniciales);
 
@@ -694,7 +735,6 @@ $("yapeCelulares")?.addEventListener("change", calcularCelulares);
 
   calcular();
   cargarSaldosIniciales();
-  cargarHistorial2M();
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -780,3 +820,36 @@ function ocultarCargandoCuadre() {
     modal.style.display = "none";
   }
 }
+
+// ==========================================
+// AVANZAR AL SIGUIENTE CAMPO CON ENTER
+// ==========================================
+
+document.addEventListener("keydown", function(event) {
+
+  if (event.key !== "Enter") return;
+
+  const actual = event.target;
+
+  // Solo funciona en campos de escritura
+  if (!actual.matches("input, select, textarea")) return;
+
+  event.preventDefault();
+
+  // Obtener todos los campos visibles y habilitados
+  const campos = [...document.querySelectorAll(
+    'input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]), select, textarea'
+  )].filter(campo => {
+    return !campo.disabled &&
+           campo.getClientRects().length > 0;
+  });
+
+  // Buscar la posición del campo actual
+  const posicion = campos.indexOf(actual);
+
+  // Avanzar al siguiente campo
+  if (posicion !== -1 && posicion < campos.length - 1) {
+    campos[posicion + 1].focus();
+  }
+
+});
