@@ -792,7 +792,7 @@ td input[type="number"] {
   font-size: 14px;
   font-weight: 800;
 }
-/* FONDO OSCURO DEL MODAL */
+ /* FONDO OSCURO DEL MODAL */
 .modal-guardado {
   display: none;
   position: fixed;
@@ -900,5 +900,286 @@ td input[type="number"] {
 @keyframes girarCarga {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   DISEÑO MODERNO - NAVEGACIÓN 2M TELECOM
+========================================== */
+
+.menu-vistas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0 25px;
+  padding: 10px;
+  background: #eef3f9;
+  border-radius: 16px;
+}
+
+.item-vista {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: #53647a;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.item-vista:hover {
+  background: #ffffff;
+  color: #1769aa;
+}
+
+.item-vista.activa {
+  background: #1769aa;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(23, 105, 170, .22);
+}
+
+.icono-vista {
+  font-size: 22px;
+}
+
+.texto-vista strong {
+  font-weight: 700;
+}
+
+.indicador-vista {
+  display: none;
+}
+
+.descripcion-vistas {
+  display: none;
+}
+
+/* ==========================================
+   VISTA HISTORIAL
+========================================== */
+
+#vistaHistorial {
+  animation: aparecerHistorial .3s ease;
+}
+
+#vistaHistorial[hidden],
+#vistaCuadre[hidden] {
+  display: none !important;
+}
+
+.historial-panel {
+  background: #ffffff;
+  border: 1px solid #e2eaf3;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 8px 25px rgba(25, 55, 90, .07);
+}
+
+.historial-panel .heading {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1769aa;
+  margin-bottom: 22px;
+  letter-spacing: .4px;
+}
+
+/* FILTROS */
+
+.historial-panel .form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.historial-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #34445a;
+}
+
+.historial-panel input,
+.historial-panel select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #d8e1ec;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #25364a;
+  outline: none;
+  font-size: 14px;
+  transition: border .2s, box-shadow .2s;
+}
+
+.historial-panel input:focus,
+.historial-panel select:focus {
+  border-color: #1769aa;
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, .12);
+}
+
+/* BOTONES */
+
+.historial-panel .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.historial-panel .button {
+  min-height: 43px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: all .2s ease;
+}
+
+.historial-panel .button:hover {
+  transform: translateY(-2px);
+}
+
+/* MENSAJE */
+
+#mensajeHistorial {
+  padding: 10px 13px;
+  border-radius: 9px;
+  color: #52657c;
+  background: #f2f6fb;
+  font-size: 13px;
+  margin: 14px 0;
+}
+
+/* TABLA */
+
+.historial-panel .table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e5ebf2;
+  border-radius: 12px;
+}
+
+.historial-panel table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.historial-panel thead {
+  background: #edf4fb;
+}
+
+.historial-panel th {
+  padding: 15px 13px;
+  color: #24547d;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.historial-panel td {
+  padding: 14px 13px;
+  border-top: 1px solid #edf1f5;
+  color: #34445a;
+  font-size: 13px;
+}
+
+.historial-panel tbody tr:hover {
+  background: #f7faff;
+}
+
+/* DETALLE HISTÓRICO */
+
+#detalleHistorico {
+  margin-top: 25px;
+  padding: 20px;
+  border: 1px solid #dce8f5;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+#detalleHistorico h3 {
+  color: #1769aa;
+  font-size: 19px;
+  margin-bottom: 12px;
+}
+
+#detalleHistorico h4 {
+  margin: 22px 0 12px;
+  color: #34445a;
+}
+
+#fechaDetalleHistorico {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* ANIMACIÓN */
+
+@keyframes aparecerHistorial {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   ADAPTACIÓN PARA CELULARES
+========================================== */
+
+@media (max-width: 650px) {
+  .menu-vistas {
+    gap: 8px;
+    padding: 7px;
+  }
+
+  .item-vista {
+    padding: 13px 7px;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .icono-vista {
+    font-size: 19px;
+  }
+
+  .historial-panel {
+    padding: 15px;
+  }
+
+  .historial-panel .heading {
+    font-size: 19px;
+  }
+
+  .historial-panel .form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .historial-panel .actions {
+    flex-direction: column;
+  }
+
+  .historial-panel .actions button {
+    width: 100%;
+  }
+
+  #detalleHistorico {
+    padding: 13px;
   }
 }
