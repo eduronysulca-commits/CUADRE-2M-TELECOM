@@ -204,13 +204,12 @@ function calcular() {
 
   // 6. ESTADO DEL CUADRE
   const estado = $("estadoHuk");
-
-  if (estado) {
-    estado.textContent =
-      Math.abs(diferencia) < 0.01
-        ? "CUADRADO"
-        : "CON DIFERENCIA";
-  }
+if (estado) {
+  const cuadrado = Math.abs(diferencia) < 0.005;
+  estado.textContent = cuadrado ? "CUADRADO" : "CON DIFERENCIA";
+  estado.classList.toggle("ok", cuadrado);
+  estado.classList.toggle("bad", !cuadrado);
+}
 }
 
 
@@ -219,6 +218,8 @@ function calcularChips() {
   const prepago = numero("prepago");
   const pospago = numero("pospago");
   const yape = numero("yapeChips");
+  const compras = numero("comprasChips");   // NUEVO
+  
 
   // Cantidad total de chips
   const cantidad = casi + prepago + pospago;
@@ -229,14 +230,17 @@ function calcularChips() {
   // ACTUALIZAR EL CAMPO QUE SE ENVÍA A GOOGLE SHEETS
   $("totalChips").value = total;
   
-  // Restar Yape para obtener el efectivo
-  const efectivo = total - yape;
+ // Restar Yape y compras para obtener el efectivo
+  const efectivo = total - yape - compras;
+
+  
 
   mostrar("cantidadChips", cantidad);
   mostrar("resTotalChips", dinero(total));
   mostrar("resYapeChips", dinero(yape));
   mostrar("efectivoChips", dinero(efectivo));
   mostrar("resEfectivoChips", dinero(efectivo));
+  mostrar("resComprasChips", dinero(compras));   // NUEVO (junto a los otros mostrar)
 
   const estado = $("estadoChips");
   if (estado) {
@@ -365,6 +369,19 @@ async function cargarSaldosIniciales() {
 async function guardarCuadre() {
   const boton = $("guardar");
   if (boton) boton.disabled = true;
+  const capitalInicial =
+  numero("efectivoInicial") + numero("bolsaInicial") + numero("recargasInicial");
+
+const capitalEsperado =
+  capitalInicial
+  - numero("gastosHuk")
+  + numero("gananciaRecaudo")
+  + numero("gananciaRecargas");
+
+const capitalReal =
+  numero("efectivoCierre") + numero("bolsaCierre") + numero("recargasCierre");
+
+const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
 
   const payload = {
     accion: "guardar",
@@ -382,51 +399,11 @@ async function guardarCuadre() {
     bolsaCierre: numero("bolsaCierre"),
     recargasCierre: numero("recargasCierre"),
 
-    capitalInicial:
-      numero("efectivoInicial") +
-      numero("bolsaInicial") +
-      numero("recargasInicial"),
-
-    capitalEsperado:
-      numero("efectivoInicial") +
-      numero("bolsaInicial") +
-      numero("recargasInicial") +
-      numero("gastosHuk") -
-      numero("gananciaRecaudo") -
-      numero("gananciaRecargas"),
-
-    capitalReal:
-      numero("efectivoCierre") +
-      numero("bolsaCierre") +
-      numero("recargasCierre"),
-
-    diferencia:
-      numero("efectivoCierre") +
-      numero("bolsaCierre") +
-      numero("recargasCierre") -
-      (
-        numero("efectivoInicial") +
-        numero("bolsaInicial") +
-        numero("recargasInicial") +
-        numero("gastosHuk") -
-        numero("gananciaRecaudo") -
-        numero("gananciaRecargas")
-      ),
-
-    estadoHuk:
-      Math.abs(
-        numero("efectivoCierre") +
-        numero("bolsaCierre") +
-        numero("recargasCierre") -
-        (
-          numero("efectivoInicial") +
-          numero("bolsaInicial") +
-          numero("recargasInicial") +
-          numero("gastosHuk") -
-          numero("gananciaRecaudo") -
-          numero("gananciaRecargas")
-        )
-      ) < 0.005 ? "Cuadrada" : "Con diferencia",
+    capitalInicial,
+    capitalEsperado,
+    capitalReal,
+    diferencia,
+    estadoHuk: Math.abs(diferencia) < 0.005 ? "Cuadrada" : "Con diferencia",
 
     casi: numero("casi"),
     prepago: numero("prepago"),
@@ -434,8 +411,9 @@ async function guardarCuadre() {
     cantidadChips: numero("casi") + numero("prepago") + numero("pospago"),
     totalChips: numero("totalChips"),
     yapeChips: numero("yapeChips"),
-    efectivoChips: numero("totalChips") - numero("yapeChips"),
-
+    productoCompras: $("productoCompras")?.value.trim() || "",
+    comprasChips: numero("comprasChips"),
+    efectivoChips: numero("totalChips") - numero("yapeChips") - numero("comprasChips"),
     yapeCelulares: numero("yapeCelulares"),
     totalCelulares: obtenerCelulares().reduce(
       (suma, c) => suma + c.precio * c.cantidad, 0
@@ -550,7 +528,7 @@ function mostrarHistorial2M(registros) {
 
     const celdaAccion = document.createElement("td");
     const boton = document.createElement("button");
-    boton.type = "button";
+    boton.type = "button";  
     boton.className = "button light";
     boton.textContent = "Ver detalle";
     boton.addEventListener("click", () => verDetalle2M(registro.ID));
@@ -738,7 +716,7 @@ $("yapeCelulares")?.addEventListener("change", calcularCelulares);
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  ["casi", "prepago", "pospago", "yapeChips"].forEach(function (id) {
+  ["casi", "prepago", "pospago", "yapeChips", "comprasChips"].forEach(function (id) {
     const campo = document.getElementById(id);
 
     if (campo) {
@@ -852,4 +830,74 @@ document.addEventListener("keydown", function(event) {
     campos[posicion + 1].focus();
   }
 
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const boton = $("btnToggleDesglose");
+  const filas = document.querySelector(".desglose-filas");
+  if (!boton || !filas) return;
+    const total = document.querySelector(".desglose-efectivo .desglose-total");
+  if (total && filas.contains(total)) filas.after(total);
+  
+
+  let animando = false;
+
+  boton.addEventListener("click", () => {
+    if (animando) return;
+    animando = true;
+
+    const ocultar = boton.textContent === "Ocultar";
+    const opciones = { duration: 450, easing: "ease-in-out" };
+
+    const cerrado = {
+      height: "0px",
+      opacity: 0,
+      transform: "translateY(-10px)",
+      paddingTop: "0px",
+      paddingBottom: "0px",
+      marginTop: "0px",
+      marginBottom: "0px"
+    };
+
+    filas.style.overflow = "hidden";
+
+    if (ocultar) {
+      const cs = getComputedStyle(filas);
+      const abierto = {
+        height: filas.offsetHeight + "px",
+        opacity: 1,
+        transform: "translateY(0)",
+        paddingTop: cs.paddingTop,
+        paddingBottom: cs.paddingBottom,
+        marginTop: cs.marginTop,
+        marginBottom: cs.marginBottom
+      };
+
+      filas.animate([abierto, cerrado], opciones).onfinish = () => {
+        filas.style.display = "none";
+        animando = false;
+      };
+
+      boton.textContent = "Mostrar";
+    } else {
+      filas.style.display = "";
+
+      const cs = getComputedStyle(filas);
+      const abierto = {
+        height: filas.offsetHeight + "px",
+        opacity: 1,
+        transform: "translateY(0)",
+        paddingTop: cs.paddingTop,
+        paddingBottom: cs.paddingBottom,
+        marginTop: cs.marginTop,
+        marginBottom: cs.marginBottom
+      };
+
+      filas.animate([cerrado, abierto], opciones).onfinish = () => {
+        filas.style.overflow = "";
+        animando = false;
+      };
+
+      boton.textContent = "Ocultar";
+    }
+  });
 });
