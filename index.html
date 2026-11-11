@@ -165,12 +165,17 @@
             <label>Yape chips (S/)
               <input id="yapeChips" class="yape" type="number" min="0" step="1" value="0">
             </label>
-          </div>
+
+            <label class="compra-fila">Compras tienda (S/)
+            <input id="productoCompras" type="text" placeholder="Producto">
+            <input id="comprasChips" type="number" min="0" step="0.01" value="0">
+            </label>
 
           <div class="result-list">
             <div><span>Cantidad total</span><strong id="cantidadChips">0</strong></div>
             <div><span>Total chips</span><strong id="resTotalChips">S/ 0.00</strong></div>
             <div><span>Yape chips</span><strong id="resYapeChips">S/ 0.00</strong></div>
+            <div><span>(−) Compras</span><strong id="resComprasChips">S/ 0.00</strong></div>
             <div class="result-total"><span>Efectivo esperado</span><strong id="efectivoChips">S/ 0.00</strong></div>
           </div>
 
@@ -214,79 +219,78 @@
 
         <!-- DESGLOSE DE EFECTIVO -->
 
-        <article class="panel desglose-efectivo">
-          <h2 class="heading blue">DESGLOSE DE EFECTIVO</h2>
+<article class="panel desglose-efectivo" style="position:relative;">
+  <h2 class="heading blue">DESGLOSE DE EFECTIVO</h2>
+  <button type="button" class="button light" id="btnToggleDesglose"
+          style="position:absolute; top:10px; right:12px;">Ocultar</button>
 
-          <div class="desglose-filas">
-            <div class="desglose-fila">
-              <label for="billete100">Billete S/ 100</label>
-              <input id="billete100" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="100">
-              <strong id="subtotal100">S/ 0.00</strong>
-            </div>
+  <div class="desglose-filas">
+    <div class="desglose-fila">
+      <label for="billete100">Billete S/ 100</label>
+      <input id="billete100" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="100">
+      <strong id="subtotal100">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="billete50">Billete S/ 50</label>
-              <input id="billete50" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="50">
-              <strong id="subtotal50">S/ 0.00</strong>
-            </div>
+    <div class="desglose-fila">
+      <label for="billete50">Billete S/ 50</label>
+      <input id="billete50" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="50">
+      <strong id="subtotal50">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="billete20">Billete S/ 20</label>
-              <input id="billete20" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="20">
-              <strong id="subtotal20">S/ 0.00</strong>
-            </div>
+    <div class="desglose-fila">
+      <label for="billete20">Billete S/ 20</label>
+      <input id="billete20" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="20">
+      <strong id="subtotal20">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="billete10">Billete S/ 10</label>
-              <input id="billete10" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="10">
-              <strong id="subtotal10">S/ 0.00</strong>
-            </div>
+    <div class="desglose-fila">
+      <label for="billete10">Billete S/ 10</label>
+      <input id="billete10" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="10">
+      <strong id="subtotal10">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="moneda5">Moneda S/ 5.00</label>
-              <input id="moneda5" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="5">
-              <strong id="subtotal5">S/ 0.00</strong>
-            </div>
+    <div class="desglose-fila">
+      <label for="moneda5">Moneda S/ 5.00</label>
+      <input id="moneda5" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="5">
+      <strong id="subtotal5">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="moneda2">Moneda S/ 2.00</label>
-              <input id="moneda2" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="2">
-              <strong id="subtotal2">S/ 0.00</strong>
-            </div>
+    <div class="desglose-fila">
+      <label for="moneda2">Moneda S/ 2.00</label>
+      <input id="moneda2" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="2">
+      <strong id="subtotal2">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="moneda1">Moneda S/ 1.00</label>
-              <input id="moneda1" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="1">
-              <strong id="subtotal1">S/ 0.00</strong>
-            </div>
+    <div class="desglose-fila">
+      <label for="moneda1">Moneda S/ 1.00</label>
+      <input id="moneda1" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="1">
+      <strong id="subtotal1">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="moneda050">Moneda S/ 0.50</label>
-              <input id="moneda050" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="0.50">
-              <strong id="subtotal050">S/ 0.00</strong>
-            </div>
+    <div class="desglose-fila">
+      <label for="moneda050">Moneda S/ 0.50</label>
+      <input id="moneda050" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="0.50">
+      <strong id="subtotal050">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="moneda020">Moneda S/ 0.20</label>
-              <input id="moneda020" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="0.20">
-              <strong id="subtotal020">S/ 0.00</strong>
-            </div>
+    <div class="desglose-fila">
+      <label for="moneda020">Moneda S/ 0.20</label>
+      <input id="moneda020" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="0.20">
+      <strong id="subtotal020">S/ 0.00</strong>
+    </div>
 
-            <div class="desglose-fila">
-              <label for="moneda010">Moneda S/ 0.10</label>
-              <input id="moneda010" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="0.10">
-              <strong id="subtotal010">S/ 0.00</strong>
-            </div>
-          </div>
+    <div class="desglose-fila">
+      <label for="moneda010">Moneda S/ 0.10</label>
+      <input id="moneda010" class="cantidad-efectivo" type="number" min="0" step="1" value="0" data-valor="0.10">
+      <strong id="subtotal010">S/ 0.00</strong>
+    </div>
+  </div>
 
-          <div class="desglose-total">
-            <span>TOTAL CONTADO</span>
-            <strong id="totalEfectivoContado">S/ 0.00</strong>
-          </div>
-        </article>
-
-      </section>
-
+  <div class="desglose-total">
+    <span>TOTAL CONTADO</span>
+    <strong id="totalEfectivoContado">S/ 0.00</strong>
+  </div>
+</article>
       <!-- RESUMEN DEL CUADRE -->
 
       <section class="summary">
