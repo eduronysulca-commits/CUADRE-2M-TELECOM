@@ -937,7 +937,7 @@ body { background: var(--fondo); }
 }
 .heading::before { display: none; }
 .desglose-efectivo .heading { background: var(--ink); }
-.historial-panel .heading { margin: -24px -24px 20px; padding: 14px 24px; }
+.historial-panel .heading { margin: 0 -24px 20px; padding: 14px 24px; }
 
 /* ---------- Campos ---------- */
 input[type="number"],
@@ -1086,13 +1086,20 @@ td { border-top: 1px solid var(--borde); }
   .topbar, .heading, .summary h2 { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .panel { box-shadow: none; }
 }
+.compra-fila {
+  flex-wrap: wrap;
+}
+
 .compra-fila input[type="text"] {
-  width: 130px;
-  max-width: 38%;
+  flex: 1 1 160px;
+  width: auto;
+  max-width: none;
+  min-width: 120px;
   text-align: left;
 }
 
 .compra-fila input[type="number"] {
-  width: 90px;
-  max-width: 28%;
+  flex: 0 0 110px;
+  width: 110px;
+  max-width: none;
 }
