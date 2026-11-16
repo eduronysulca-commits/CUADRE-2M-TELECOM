@@ -440,7 +440,8 @@ const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
 
     // Mantener tu mensaje original
     mostrarCuadreGuardado();
-
+    // Cerrar el desglose si está abierto
+    window.cerrarDesglose?.();
     localStorage.removeItem(CLAVE_BORRADOR);
 
   } catch (error) {
@@ -840,7 +841,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
 
   let animando = false;
-
+  // Permite cerrar el desglose desde otras partes del código
+  window.cerrarDesglose = () => {
+    if (boton.textContent.trim() === "Ocultar") boton.click();
+  };
   boton.addEventListener("click", () => {
     if (animando) return;
     animando = true;
