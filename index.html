@@ -438,6 +438,28 @@
         <h2>Guardando cuadre...</h2>
       </div>
     </div>
+<!-- MODAL DE CARGA -->
+
+    <div id="modalCargando" class="modal-guardado">
+      <div class="modal-contenido">
+        <div class="spinner-guardado"></div>
+        <h2>Guardando cuadre...</h2>
+      </div>
+    </div>
+        <!-- MODAL DE CONTRASEÑA -->
+    <div id="modalClave" class="modal-clave" hidden>
+      <div class="modal-caja" id="modalCaja">
+        <div class="modal-icono">🔒</div>
+        <h3>Saldos del cuadre de ayer</h3>
+        <p>Ingresa la contraseña para poder editarlos.</p>
+        <input type="password" id="claveInput" placeholder="••••••" autocomplete="off">
+        <small id="claveError"></small>
+        <div class="modal-botones">
+          <button type="button" id="claveCancelar">Cancelar</button>
+          <button type="button" id="claveAceptar">Desbloquear</button>
+        </div>
+      </div>
+    </div>
 
   </main>
 </body>
