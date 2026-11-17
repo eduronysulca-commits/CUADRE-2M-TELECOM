@@ -1,7 +1,73 @@
-
 const API_URL = "https://script.google.com/macros/s/AKfycbwVP-bEBSZS6i_jFCVWtTicStkbXqMyrOdOlplJ1nK_HJ8KvKVwyaLDt0MWqEtJ3IwORQ/exec";
 
 const $ = id => document.getElementById(id);
+const CAMPOS_AYER = ["efectivoInicial", "bolsaInicial", "recargasInicial"];
+const CLAVE_EDICION = "609457533";   // cámbiala por la tuya
+
+function bloquearSaldosIniciales(bloquear) {
+  CAMPOS_AYER.forEach(id => {
+    const campo = $(id);
+    if (!campo) return;
+    campo.readOnly = bloquear;
+    campo.classList.toggle("bloqueado", bloquear);
+  });
+}
+
+let campoPendiente = null;
+
+function pedirClaveParaEditar(evento) {
+  const campo = evento.currentTarget;
+  if (!campo.readOnly) return;
+  campoPendiente = campo;
+  campo.blur();
+  abrirModalClave();
+}
+
+function abrirModalClave() {
+  const modal = $("modalClave");
+  const caja = $("modalCaja");
+  $("claveInput").value = "";
+  $("claveError").textContent = "";
+  caja.classList.remove("temblor", "error", "exito");
+  caja.querySelector(".modal-icono").textContent = "🔒";
+  modal.classList.remove("saliendo");
+  modal.hidden = false;
+  setTimeout(() => $("claveInput").focus(), 80);
+}
+
+function cerrarModalClave() {
+  const modal = $("modalClave");
+  modal.classList.add("saliendo");
+  setTimeout(() => {
+    modal.hidden = true;
+    modal.classList.remove("saliendo");
+  }, 220);
+}
+
+function validarClave() {
+  const caja = $("modalCaja");
+  const input = $("claveInput");
+
+  if (input.value === CLAVE_EDICION) {
+    caja.classList.remove("error");
+    caja.classList.add("exito");
+    caja.querySelector(".modal-icono").textContent = "🔓";
+    $("claveError").textContent = "";
+    bloquearSaldosIniciales(false);
+    const campo = campoPendiente;
+    setTimeout(() => {
+      cerrarModalClave();
+      setTimeout(() => campo?.focus(), 250);
+    }, 650);
+  } else {
+    $("claveError").textContent = "Contraseña incorrecta";
+    caja.classList.add("error");
+    caja.classList.remove("temblor");
+    void caja.offsetWidth;            // reinicia la animación
+    caja.classList.add("temblor");
+    input.select();
+  }
+}
 // ======================================
 // NAVEGACIÓN ENTRE PESTAÑAS
 // ======================================
@@ -12,15 +78,8 @@ function cambiarVista(vista) {
   $("vistaCuadre").hidden = mostrarHistorial;
   $("vistaHistorial").hidden = !mostrarHistorial;
 
-  $("btnNuevoCuadre").classList.toggle(
-    "activa",
-    !mostrarHistorial
-  );
-
-  $("btnHistorial").classList.toggle(
-    "activa",
-    mostrarHistorial
-  );
+  $("btnNuevoCuadre").classList.toggle("activa", !mostrarHistorial);
+  $("btnHistorial").classList.toggle("activa", mostrarHistorial);
 
   if (mostrarHistorial) {
     cargarHistorial2M();
@@ -31,6 +90,7 @@ function cambiarVista(vista) {
     behavior: "smooth"
   });
 }
+
 const CLAVE_BORRADOR = "2mTelecom_borradorCuadre_v1";
 
 let registrosAnteriores = [];
@@ -69,7 +129,7 @@ function guardarBorrador() {
     const datos = {};
 
     document.querySelectorAll("input, select, textarea").forEach(campo => {
-      if (campo.id) datos[campo.id] = campo.value;
+      if (campo.id && campo.id !== "claveInput") datos[campo.id] = campo.value;
     });
 
     datos.celulares = obtenerCelulares();
@@ -84,7 +144,6 @@ function programarBorrador() {
   clearTimeout(temporizadorBorrador);
   temporizadorBorrador = setTimeout(guardarBorrador, 300);
 }
-
 
 function restaurarBorrador() {
   try {
@@ -114,7 +173,6 @@ function restaurarBorrador() {
     return false;
   }
 }
-
 
 function solicitarJSONP(parametros) {
   return new Promise((resolve, reject) => {
@@ -154,7 +212,6 @@ function solicitarJSONP(parametros) {
 // CAJA HUK
 // =====================================================
 
-
 function calcular() {
   // IMPORTES INICIALES
   const efectivoInicial = numero("efectivoInicial");
@@ -176,8 +233,8 @@ function calcular() {
     efectivoInicial + bolsaInicial + recargasInicial;
 
   // 2. CAPITAL ESPERADO:
-  // Los gastos HUK se SUMAN.
-  // Las ganancias de recaudo y recargas se RESTAN.
+  // Los gastos HUK se RESTAN.
+  // Las ganancias de recaudo y recargas se SUMAN.
   const capitalEsperado =
     capitalInicial
     - gastosHuk
@@ -188,8 +245,8 @@ function calcular() {
   const capitalReal =
     efectivoCierre + bolsaCierre + recargasCierre;
 
-  // 4. DIFERENCIA FINAL
-  const diferencia = capitalReal - capitalEsperado;
+  // 4. DIFERENCIA FINAL (redondeada a 2 decimales)
+  const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
 
   // 5. MOSTRAR RESULTADOS
   mostrar("capitalInicial", dinero(capitalInicial));
@@ -204,43 +261,43 @@ function calcular() {
 
   // 6. ESTADO DEL CUADRE
   const estado = $("estadoHuk");
-if (estado) {
-  const cuadrado = Math.abs(diferencia) < 0.005;
-  estado.textContent = cuadrado ? "CUADRADO" : "CON DIFERENCIA";
-  estado.classList.toggle("ok", cuadrado);
-  estado.classList.toggle("bad", !cuadrado);
-}
+  if (estado) {
+    const cuadrado = Math.abs(diferencia) < 0.005;
+    estado.textContent = cuadrado ? "CUADRADO" : "CON DIFERENCIA";
+    estado.classList.toggle("ok", cuadrado);
+    estado.classList.toggle("bad", !cuadrado);
+  }
 }
 
+// =====================================================
+// CHIPS
+// =====================================================
 
 function calcularChips() {
   const casi = numero("casi");
   const prepago = numero("prepago");
   const pospago = numero("pospago");
   const yape = numero("yapeChips");
-  const compras = numero("comprasChips");   // NUEVO
-  
+  const compras = numero("comprasChips");
 
   // Cantidad total de chips
   const cantidad = casi + prepago + pospago;
 
   // Calcular importes según el precio de cada chip
   const total = (casi * 10) + (prepago * 5) + (pospago * 1);
-  
+
   // ACTUALIZAR EL CAMPO QUE SE ENVÍA A GOOGLE SHEETS
   $("totalChips").value = total;
-  
- // Restar Yape y compras para obtener el efectivo
-  const efectivo = total - yape - compras;
 
-  
+  // Restar Yape y compras para obtener el efectivo
+  const efectivo = total - yape - compras;
 
   mostrar("cantidadChips", cantidad);
   mostrar("resTotalChips", dinero(total));
   mostrar("resYapeChips", dinero(yape));
+  mostrar("resComprasChips", dinero(compras));
   mostrar("efectivoChips", dinero(efectivo));
   mostrar("resEfectivoChips", dinero(efectivo));
-  mostrar("resComprasChips", dinero(compras));   // NUEVO (junto a los otros mostrar)
 
   const estado = $("estadoChips");
   if (estado) {
@@ -248,9 +305,9 @@ function calcularChips() {
   }
 }
 
-
-
-
+// =====================================================
+// CELULARES
+// =====================================================
 
 function agregarCelular(modelo = "", precio = 0, cantidad = 1) {
   const contenedor = $("filasCelulares");
@@ -343,16 +400,19 @@ async function cargarSaldosIniciales() {
       throw new Error(respuesta.mensaje || "No se pudieron consultar los saldos.");
     }
 
-    if (respuesta.encontrado) {
+        if (respuesta.encontrado) {
       poner("efectivoInicial", respuesta.efectivoInicial);
       poner("bolsaInicial", respuesta.bolsaInicial);
       poner("recargasInicial", respuesta.recargasInicial);
+
+      bloquearSaldosIniciales(true);   // NUEVO
 
       calcular();
       guardarBorrador();
 
       console.log("Saldos copiados del día:", respuesta.fechaAnterior);
     } else {
+      bloquearSaldosIniciales(false);  // NUEVO
       console.log("No se encontró un cuadre anterior para la fecha elegida.");
     }
   } catch (error) {
@@ -369,19 +429,24 @@ async function cargarSaldosIniciales() {
 async function guardarCuadre() {
   const boton = $("guardar");
   if (boton) boton.disabled = true;
+
   const capitalInicial =
-  numero("efectivoInicial") + numero("bolsaInicial") + numero("recargasInicial");
+    numero("efectivoInicial") + numero("bolsaInicial") + numero("recargasInicial");
 
-const capitalEsperado =
-  capitalInicial
-  - numero("gastosHuk")
-  + numero("gananciaRecaudo")
-  + numero("gananciaRecargas");
+  const capitalEsperado =
+    capitalInicial
+    - numero("gastosHuk")
+    + numero("gananciaRecaudo")
+    + numero("gananciaRecargas");
 
-const capitalReal =
-  numero("efectivoCierre") + numero("bolsaCierre") + numero("recargasCierre");
+  const capitalReal =
+    numero("efectivoCierre") + numero("bolsaCierre") + numero("recargasCierre");
 
-const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
+  const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
+
+  const totalCelulares = obtenerCelulares().reduce(
+    (suma, c) => suma + c.precio * c.cantidad, 0
+  );
 
   const payload = {
     accion: "guardar",
@@ -414,16 +479,14 @@ const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
     productoCompras: $("productoCompras")?.value.trim() || "",
     comprasChips: numero("comprasChips"),
     efectivoChips: numero("totalChips") - numero("yapeChips") - numero("comprasChips"),
+
     yapeCelulares: numero("yapeCelulares"),
-    totalCelulares: obtenerCelulares().reduce(
-      (suma, c) => suma + c.precio * c.cantidad, 0
-    ),
-    efectivoCelulares:
-      obtenerCelulares().reduce((suma, c) => suma + c.precio * c.cantidad, 0)
-      - numero("yapeCelulares"),
+    totalCelulares,
+    efectivoCelulares: totalCelulares - numero("yapeCelulares"),
 
     celulares: obtenerCelulares().filter(c => c.modelo || c.precio || c.cantidad)
   };
+
   try {
     // Mostrar animación de carga
     mostrarCargandoCuadre();
@@ -438,10 +501,12 @@ const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
     // Ocultar carga
     ocultarCargandoCuadre();
 
-    // Mantener tu mensaje original
+    // Mostrar mensaje de guardado
     mostrarCuadreGuardado();
+
     // Cerrar el desglose si está abierto
     window.cerrarDesglose?.();
+
     localStorage.removeItem(CLAVE_BORRADOR);
 
   } catch (error) {
@@ -456,7 +521,6 @@ const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
 
     if (boton) boton.disabled = false;
   }
-  
 }
 
 // =====================================================
@@ -465,7 +529,6 @@ const diferencia = Math.round((capitalReal - capitalEsperado) * 100) / 100;
 
 async function cargarHistorial2M() {
   const cuerpo = $("filasHistorial");
-  const texto = $("mensajeHistorial");
 
   if (cuerpo) cuerpo.replaceChildren();
   mensaje("mensajeHistorial", "Buscando cuadres...");
@@ -529,7 +592,7 @@ function mostrarHistorial2M(registros) {
 
     const celdaAccion = document.createElement("td");
     const boton = document.createElement("button");
-    boton.type = "button";  
+    boton.type = "button";
     boton.className = "button light";
     boton.textContent = "Ver detalle";
     boton.addEventListener("click", () => verDetalle2M(registro.ID));
@@ -635,8 +698,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!$("fecha").value) poner("fecha", fechaDeHoy());
 
   restaurarBorrador();
-    // BOTONES DE NAVEGACIÓN
 
+  // BOTONES DE NAVEGACIÓN
   $("btnNuevoCuadre")?.addEventListener("click", () => {
     cambiarVista("cuadre");
   });
@@ -646,37 +709,50 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   $("fecha")?.addEventListener("change", cargarSaldosIniciales);
-
-document.querySelectorAll("input, select, textarea").forEach(campo => {
-  campo.addEventListener("input", () => {
-    calcular();
-    programarBorrador();
+  // NUEVO: pedir contraseña al tocar los saldos de ayer
+  CAMPOS_AYER.forEach(id => $(id)?.addEventListener("click", pedirClaveParaEditar));
+  
+    $("claveAceptar")?.addEventListener("click", validarClave);
+  $("claveCancelar")?.addEventListener("click", cerrarModalClave);
+  $("claveInput")?.addEventListener("keydown", e => {
+    e.stopPropagation();              // evita el salto de campo con Enter
+    if (e.key === "Enter") validarClave();
+    if (e.key === "Escape") cerrarModalClave();
+  });
+  $("modalClave")?.addEventListener("click", e => {
+    if (e.target.id === "modalClave") cerrarModalClave();
   });
 
-  campo.addEventListener("change", () => {
-    calcular();
-    programarBorrador();
+  document.querySelectorAll("input, select, textarea").forEach(campo => {
+    campo.addEventListener("input", () => {
+      calcular();
+      programarBorrador();
+    });
+
+    campo.addEventListener("change", () => {
+      calcular();
+      programarBorrador();
+    });
   });
-});
 
-// Guardar también los cambios en filas agregadas dinámicamente
-document.addEventListener("input", evento => {
-  if (evento.target.matches("input, select, textarea")) {
-    programarBorrador();
-  }
-});
+  // Guardar también los cambios en filas agregadas dinámicamente
+  document.addEventListener("input", evento => {
+    if (evento.target.matches("input, select, textarea")) {
+      programarBorrador();
+    }
+  });
 
-document.addEventListener("change", evento => {
-  if (evento.target.matches("input, select, textarea")) {
-    programarBorrador();
-  }
-});
+  document.addEventListener("change", evento => {
+    if (evento.target.matches("input, select, textarea")) {
+      programarBorrador();
+    }
+  });
 
- 
   $("agregarCelular")?.addEventListener("click", () => agregarCelular());
+
   // ACTUALIZAR EFECTIVO CUANDO CAMBIE EL YAPE DE CELULARES
-$("yapeCelulares")?.addEventListener("input", calcularCelulares);
-$("yapeCelulares")?.addEventListener("change", calcularCelulares);
+  $("yapeCelulares")?.addEventListener("input", calcularCelulares);
+  $("yapeCelulares")?.addEventListener("change", calcularCelulares);
 
   $("guardar")?.addEventListener("click", guardarCuadre);
 
@@ -696,7 +772,9 @@ $("yapeCelulares")?.addEventListener("change", calcularCelulares);
     if (!confirm("¿Deseas limpiar los datos del formulario?")) return;
 
     document.querySelectorAll("input").forEach(campo => {
-      if (campo.id !== "fecha" && campo.type !== "date") campo.value = 0;
+      if (campo.id !== "fecha" && campo.type !== "date") {
+        campo.value = campo.type === "text" ? "" : 0;
+      }
     });
 
     poner("fecha", fechaDeHoy());
@@ -704,6 +782,7 @@ $("yapeCelulares")?.addEventListener("change", calcularCelulares);
     agregarCelular();
     localStorage.removeItem(CLAVE_BORRADOR);
     calcular();
+    calcularChips();
   });
 
   $("imprimir")?.addEventListener("click", () => window.print());
@@ -728,6 +807,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   calcularChips();
 });
+
+// =====================================================
+// DESGLOSE DE EFECTIVO
+// =====================================================
+
 function calcularDesgloseEfectivo(actualizarCierre = true) {
   let totalCentimos = 0;
 
@@ -775,6 +859,11 @@ document.addEventListener("DOMContentLoaded", () => {
     calcularDesgloseEfectivo(false);
   });
 });
+
+// =====================================================
+// MODALES
+// =====================================================
+
 function mostrarCuadreGuardado() {
   const modal = document.getElementById("modalGuardado");
 
@@ -784,6 +873,7 @@ function mostrarCuadreGuardado() {
     modal.style.display = "none";
   }, 2500);
 }
+
 function mostrarCargandoCuadre() {
   const modal = document.getElementById("modalCargando");
 
@@ -804,7 +894,7 @@ function ocultarCargandoCuadre() {
 // AVANZAR AL SIGUIENTE CAMPO CON ENTER
 // ==========================================
 
-document.addEventListener("keydown", function(event) {
+document.addEventListener("keydown", function (event) {
 
   if (event.key !== "Enter") return;
 
@@ -832,24 +922,39 @@ document.addEventListener("keydown", function(event) {
   }
 
 });
+
+// ==========================================
+// BOTÓN OCULTAR / MOSTRAR DESGLOSE
+// ==========================================
+
 document.addEventListener("DOMContentLoaded", () => {
   const boton = $("btnToggleDesglose");
-  const filas = document.querySelector(".desglose-filas");
-  if (!boton || !filas) return;
-    const total = document.querySelector(".desglose-efectivo .desglose-total");
+  const primeraFila = document.querySelector(".desglose-fila");
+  if (!boton || !primeraFila) return;
+
+  // Contenedor que tiene SOLO las filas (nunca incluye el total)
+  const filas = primeraFila.parentElement;
+
+  // Seguro: si el total quedó dentro de las filas, lo saca
+  const total = document.querySelector(".desglose-efectivo .desglose-total");
   if (total && filas.contains(total)) filas.after(total);
-  
+
+  // Empieza oculto al abrir la página
+  filas.style.display = "none";
+  boton.textContent = "Mostrar";
 
   let animando = false;
+
   // Permite cerrar el desglose desde otras partes del código
   window.cerrarDesglose = () => {
     if (boton.textContent.trim() === "Ocultar") boton.click();
   };
+
   boton.addEventListener("click", () => {
     if (animando) return;
     animando = true;
 
-    const ocultar = boton.textContent === "Ocultar";
+    const ocultar = boton.textContent.trim() === "Ocultar";
     const opciones = { duration: 450, easing: "ease-in-out" };
 
     const cerrado = {
